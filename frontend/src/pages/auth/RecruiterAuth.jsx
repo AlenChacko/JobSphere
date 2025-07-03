@@ -6,13 +6,54 @@ import {
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { registerRecruiter, loginRecruiter } from "../../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const RecruiterAuth = () => {
   const [mode, setMode] = useState("login");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
   const isRegister = mode === "register";
+
+  const [form, setForm] = useState({
+    companyName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading } = useSelector((state) => state.auth);
+
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { companyName, email, password, confirmPassword } = form;
+
+    try {
+      let res;
+
+      if (isRegister) {
+        if (password !== confirmPassword) {
+          return alert("Passwords do not match");
+        }
+
+        res = await dispatch(registerRecruiter({ companyName, email, password })).unwrap();
+      } else {
+        res = await dispatch(loginRecruiter({ email, password })).unwrap();
+      }
+
+      if (res && res.user?._id) {
+        navigate(`/recruiter/dashboard/${res.user._id}`);
+      }
+    } catch (err) {
+      console.error("Recruiter Auth Error:", err);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-white px-4">
@@ -26,8 +67,7 @@ const RecruiterAuth = () => {
             : "Welcome back! Login to manage your job postings."}
         </p>
 
-        <form className="space-y-6">
-          {/* Company Name - only for Register */}
+        <form className="space-y-6" onSubmit={handleSubmit}>
           {isRegister && (
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -37,6 +77,9 @@ const RecruiterAuth = () => {
                 <FaBuilding className="absolute top-3 left-3 text-gray-400" />
                 <input
                   type="text"
+                  name="companyName"
+                  value={form.companyName}
+                  onChange={handleChange}
                   placeholder="e.g. Google"
                   className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500"
                 />
@@ -44,7 +87,6 @@ const RecruiterAuth = () => {
             </div>
           )}
 
-          {/* Email */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -53,13 +95,15 @@ const RecruiterAuth = () => {
               <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
               <input
                 type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
                 placeholder="example@company.com"
                 className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500"
               />
             </div>
           </div>
 
-          {/* Password */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -68,6 +112,9 @@ const RecruiterAuth = () => {
               <FaLock className="absolute top-3 left-3 text-gray-400" />
               <input
                 type={showPassword ? "text" : "password"}
+                name="password"
+                value={form.password}
+                onChange={handleChange}
                 placeholder="Enter your password"
                 className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500"
               />
@@ -81,7 +128,6 @@ const RecruiterAuth = () => {
             </div>
           </div>
 
-          {/* Confirm Password - only for Register */}
           {isRegister && (
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -91,6 +137,9 @@ const RecruiterAuth = () => {
                 <FaLock className="absolute top-3 left-3 text-gray-400" />
                 <input
                   type={showConfirm ? "text" : "password"}
+                  name="confirmPassword"
+                  value={form.confirmPassword}
+                  onChange={handleChange}
                   placeholder="Re-enter password"
                   className="w-full pl-10 pr-10 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500"
                 />
@@ -105,16 +154,19 @@ const RecruiterAuth = () => {
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-semibold shadow-md transition-all"
           >
-            {isRegister ? "Create Account" : "Login"}
+            {loading
+              ? "Please wait..."
+              : isRegister
+              ? "Create Account"
+              : "Login"}
           </button>
         </form>
 
-        {/* Switch link */}
         <p className="text-center text-sm text-gray-600 mt-6">
           {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
           <button

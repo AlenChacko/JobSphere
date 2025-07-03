@@ -28,7 +28,6 @@ export const registerEmployee = createAsyncThunk(
   }
 );
 
-
 // 🔹 Login Employee
 export const loginEmployee = createAsyncThunk(
   "auth/loginEmployee",
@@ -53,6 +52,51 @@ export const loginEmployee = createAsyncThunk(
   }
 );
 
+// 🔹 Register Recruiter
+export const registerRecruiter = createAsyncThunk(
+  "auth/registerRecruiter",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(`${API}/api/auth/register-recruiter`, formData);
+      toast.success(data.message);
+      return {
+        user: {
+          _id: data._id,
+          companyName: data.companyName,
+          email: data.email,
+        },
+        token: data.token,
+        role: "recruiter",
+      };
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Recruiter registration failed");
+      return rejectWithValue(err.response?.data?.message);
+    }
+  }
+);
+
+// 🔹 Login Recruiter
+export const loginRecruiter = createAsyncThunk(
+  "auth/loginRecruiter",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.post(`${API}/api/auth/login-recruiter`, formData);
+      toast.success(data.message);
+      return {
+        user: {
+          _id: data._id,
+          companyName: data.companyName,
+          email: data.email,
+        },
+        token: data.token,
+        role: "recruiter",
+      };
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Recruiter login failed");
+      return rejectWithValue(err.response?.data?.message);
+    }
+  }
+);
 
 // 🔹 Initial state
 const initialState = {
@@ -76,6 +120,8 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+
+      // Employee Register
       .addCase(registerEmployee.pending, (state) => {
         state.loading = true;
       })
@@ -91,6 +137,8 @@ const authSlice = createSlice({
       .addCase(registerEmployee.rejected, (state) => {
         state.loading = false;
       })
+
+      // Employee Login
       .addCase(loginEmployee.pending, (state) => {
         state.loading = true;
       })
@@ -104,6 +152,40 @@ const authSlice = createSlice({
         localStorage.setItem("role", action.payload.role);
       })
       .addCase(loginEmployee.rejected, (state) => {
+        state.loading = false;
+      })
+
+      // Recruiter Register
+      .addCase(registerRecruiter.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(registerRecruiter.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.role = action.payload.role;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("token", action.payload.token);
+        localStorage.setItem("role", action.payload.role);
+      })
+      .addCase(registerRecruiter.rejected, (state) => {
+        state.loading = false;
+      })
+
+      // Recruiter Login
+      .addCase(loginRecruiter.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginRecruiter.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.role = action.payload.role;
+        localStorage.setItem("user", JSON.stringify(action.payload.user));
+        localStorage.setItem("token", action.payload.token);
+        localStorage.setItem("role", action.payload.role);
+      })
+      .addCase(loginRecruiter.rejected, (state) => {
         state.loading = false;
       });
   },

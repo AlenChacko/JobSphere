@@ -4,12 +4,19 @@ const employeeSchema = mongoose.Schema(
   {
     firstName: { type: String, trim: true, required: true },
     lastName: { type: String, trim: true, required: true },
-    email: { type: String, unique: true, required: true, trim: true },
+    email: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+      lowercase: true,
+    },
     password: { type: String, required: true, trim: true },
     role: { type: String, default: "employee" },
 
+    phone: { type: String, unique: true, trim: true }, 
+
     employeeInfo: {
-      phone: { type: String, unique: true, trim: true },
       location: {
         country: { type: String, trim: true },
         state: { type: String, trim: true },
@@ -17,7 +24,10 @@ const employeeSchema = mongoose.Schema(
       },
       experience: { type: String, trim: true },
       currentRole: { type: String, trim: true },
-      skills: [{ type: String, trim: true }],
+      skills: {
+        type: [String],
+        default: [],
+      },
       education: { type: String, trim: true },
     },
 
