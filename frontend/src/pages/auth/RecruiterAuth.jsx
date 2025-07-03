@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { FaBuilding, FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaBuilding,
+  FaEnvelope,
+  FaLock,
+  FaEye,
+  FaEyeSlash,
+} from "react-icons/fa";
 
 const RecruiterAuth = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -8,13 +14,19 @@ const RecruiterAuth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 to-white px-4">
       <div className="bg-white shadow-2xl rounded-3xl p-10 w-full max-w-xl transition-all duration-300">
-        <h2 className="text-4xl font-extrabold text-center text-green-700 mb-2">Join JobSphere</h2>
-        <p className="text-center text-gray-600 mb-8 text-sm">Create your recruiter account and post jobs effortlessly.</p>
+        <h2 className="text-4xl font-extrabold text-center text-green-700 mb-2">
+          Join JobSphere
+        </h2>
+        <p className="text-center text-gray-600 mb-8 text-sm">
+          Create your recruiter account and post jobs effortlessly.
+        </p>
 
         <form className="space-y-6">
           {/* Company Name */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Company Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Company Name
+            </label>
             <div className="relative">
               <FaBuilding className="absolute top-3 left-3 text-gray-400" />
               <input
@@ -27,7 +39,9 @@ const RecruiterAuth = () => {
 
           {/* Email */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
             <div className="relative">
               <FaEnvelope className="absolute top-3 left-3 text-gray-400" />
               <input
@@ -40,7 +54,9 @@ const RecruiterAuth = () => {
 
           {/* Password */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Password
+            </label>
             <div className="relative">
               <FaLock className="absolute top-3 left-3 text-gray-400" />
               <input
@@ -60,7 +76,9 @@ const RecruiterAuth = () => {
 
           {/* Confirm Password */}
           <div className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm Password
+            </label>
             <div className="relative">
               <FaLock className="absolute top-3 left-3 text-gray-400" />
               <input
