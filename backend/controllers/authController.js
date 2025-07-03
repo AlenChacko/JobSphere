@@ -1,6 +1,6 @@
 import handler from "express-async-handler";
 import { Employee } from "../models/employeeModel.js";
-import { generateToken, hashPassword } from "../utils/utils.js";
+import { comparePassword, generateToken, hashPassword } from "../utils/utils.js";
 
 export const registerEmployee = handler(async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -39,7 +39,39 @@ export const registerEmployee = handler(async (req, res) => {
   }
 });
 
-export const loginEmployee = handler(async (req, res) => {});
+export const loginEmployee = handler(async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("Required fields are missing");
+  }
+
+  const employee = await Employee.findOne({ email });
+
+  if (!employee) {
+    res.status(404);
+    throw new Error("Account doesn't exist");
+  }
+
+  const matchPassword = await comparePassword(password, employee.password);
+
+  if (matchPassword) {
+    const { password, ...employeeData } = employee._doc;
+    res.status(200).json({
+      message: "Employee login success",
+      ...employeeData,
+      token: generateToken(
+        { id: employee._id },
+        process.env.EMPLOYEE_JWT_SECRET
+      ),
+    });
+  } else {
+    res.status(401);
+    throw new Error("Invalid credentials");
+  }
+});
+
 
 export const registerRecruiter = handler(async (req, res) => {});
 
