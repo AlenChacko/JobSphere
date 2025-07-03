@@ -1,0 +1,48 @@
+import handler from "express-async-handler";
+import { Employee } from "../models/employeeModel.js";
+import { generateToken, hashPassword } from "../utils/utils.js";
+
+export const registerEmployee = handler(async (req, res) => {
+  const { firstName, lastName, email, password } = req.body;
+
+  if (!firstName || !lastName || !email || !password) {
+    res.status(400);
+    throw new Error("Required fields are missing");
+  }
+
+  const isExisting = await Employee.findOne({ email });
+  if (isExisting) {
+    res.status(409);
+    throw new Error("This email already registered");
+  }
+
+  const hashedPassword = await hashPassword(password);
+  const newEmployee = await Employee.create({
+    firstName,
+    lastName,
+    email,
+    password: hashedPassword,
+  });
+
+  if (!newEmployee) {
+    res.status(500);
+    throw new Error("Employee registration failed");
+  } else {
+    const { password, ...employeeWithoutPassword } = newEmployee._doc;
+    res.status(201).json({message:"Employee registration success",
+      ...employeeWithoutPassword,
+      token: generateToken(
+        { id: newEmployee._id },
+        process.env.EMPLOYEE_JWT_SECRET
+      ),
+    });
+  }
+});
+
+export const loginEmployee = handler(async (req, res) => {});
+
+export const registerRecruiter = handler(async (req, res) => {});
+
+export const loginRecruiter = handler(async (req, res) => {});
+
+export const loginAdmin = handler(async (req, res) => {});
