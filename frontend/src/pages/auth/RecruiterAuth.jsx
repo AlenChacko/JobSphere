@@ -27,8 +27,9 @@ const RecruiterAuth = () => {
   const navigate = useNavigate();
   const { loading } = useSelector((state) => state.auth);
 
-  const handleChange = (e) =>
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,22 +37,22 @@ const RecruiterAuth = () => {
 
     try {
       let res;
-
       if (isRegister) {
         if (password !== confirmPassword) {
           return alert("Passwords do not match");
         }
-
-        res = await dispatch(registerRecruiter({ companyName, email, password })).unwrap();
+        res = await dispatch(
+          registerRecruiter({ companyName, email, password })
+        ).unwrap();
       } else {
         res = await dispatch(loginRecruiter({ email, password })).unwrap();
       }
 
-      if (res && res.user?._id) {
+      if (res && res.user && res.user._id) {
         navigate(`/recruiter/dashboard/${res.user._id}`);
       }
     } catch (err) {
-      console.error("Recruiter Auth Error:", err);
+      console.error("Auth error:", err);
     }
   };
 
@@ -68,6 +69,7 @@ const RecruiterAuth = () => {
         </p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
+          {/* Company Name - only for Register */}
           {isRegister && (
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -87,6 +89,7 @@ const RecruiterAuth = () => {
             </div>
           )}
 
+          {/* Email */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Email Address
@@ -104,6 +107,7 @@ const RecruiterAuth = () => {
             </div>
           </div>
 
+          {/* Password */}
           <div className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Password
@@ -128,6 +132,7 @@ const RecruiterAuth = () => {
             </div>
           </div>
 
+          {/* Confirm Password - only for Register */}
           {isRegister && (
             <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -154,6 +159,7 @@ const RecruiterAuth = () => {
             </div>
           )}
 
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -167,6 +173,7 @@ const RecruiterAuth = () => {
           </button>
         </form>
 
+        {/* Switch link */}
         <p className="text-center text-sm text-gray-600 mt-6">
           {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
           <button
