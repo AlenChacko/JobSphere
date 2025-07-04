@@ -1,14 +1,13 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import ChooseRole from './pages/ChooseRole';
-import EmployeeAuth from './pages/auth/EmployeeAuth';
-import RecruiterAuth from './pages/auth/RecruiterAuth';
-import EmployeeDashboard from './pages/employee/EmployeeDashboard';
-import RecruiterDashboard from './pages/recruiter/RecruiterDashboard';
-
-import PrivateRoute from './routes/PrivateRoute';
-import PublicRoute from './routes/PublicRoute';
-import EditRecruiter from './pages/recruiter/EditRecruiter';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import ChooseRole from "./pages/ChooseRole";
+import EmployeeAuth from "./pages/auth/EmployeeAuth";
+import RecruiterAuth from "./pages/auth/RecruiterAuth";
+import EmployeeDashboard from "./pages/employee/EmployeeDashboard";
+import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
+import PrivateRoute from "./routes/PrivateRoute";
+import PublicRoute from "./routes/PublicRoute";
+import EditRecruiter from "./pages/recruiter/EditRecruiter";
 
 const App = () => {
   return (
@@ -41,17 +40,24 @@ const App = () => {
 
       {/* Private routes */}
       <Route
-        path="/employee/dashboard/:id"
+        path="/employee/dashboard"
         element={
-          <PrivateRoute allowedRoles={['employee']}>
+          <PrivateRoute allowedRoles={["employee"]}>
             <EmployeeDashboard />
           </PrivateRoute>
         }
       />
+
+      {/* 🔁 Redirect old dashboard with ID to new one */}
+      <Route
+        path="/recruiter/dashboard/:id"
+        element={<Navigate to="/recruiter/dashboard" replace />}
+      />
+
       <Route
         path="/recruiter/dashboard"
         element={
-          <PrivateRoute allowedRoles={['recruiter']}>
+          <PrivateRoute allowedRoles={["recruiter"]}>
             <RecruiterDashboard />
           </PrivateRoute>
         }
@@ -59,7 +65,7 @@ const App = () => {
       <Route
         path="/recruiter/edit-profile"
         element={
-          <PrivateRoute allowedRoles={['recruiter']}>
+          <PrivateRoute allowedRoles={["recruiter"]}>
             <EditRecruiter />
           </PrivateRoute>
         }

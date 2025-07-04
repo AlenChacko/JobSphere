@@ -6,34 +6,37 @@ import { Recruiter } from "../models/recruiterModel.js";
 export const protectRecruiter = asyncHandler(async (req, res, next) => {
   let token;
 
-  // Check if token is in Authorization header and starts with 'Bearer'
+  // Check for Bearer token in Authorization header
   if (
     req.headers.authorization &&
     req.headers.authorization.startsWith("Bearer")
   ) {
     try {
-      // Extract token
       token = req.headers.authorization.split(" ")[1];
 
-      // Verify token
+      // Decode token using RECRUITER_JWT_SECRET
       const decoded = jwt.verify(token, process.env.RECRUITER_JWT_SECRET);
 
-      // Get recruiter from DB and exclude password
-      req.user = await Recruiter.findById(decoded.id).select("-password");
+      // Optional: log decoded payload to debug
+      // console.log("Decoded JWT:", decoded); // should contain { id: ... }
 
-      if (!req.user) {
+      // Find recruiter by decoded.id and exclude password
+      const recruiter = await Recruiter.findById(decoded.id).select("-password");
+
+      if (!recruiter) {
         res.status(401);
         throw new Error("Recruiter not found");
       }
 
+      req.user = recruiter;
       next();
-    } catch (err) {
-      console.error("Token verification failed:", err);
+    } catch (error) {
+      console.error("Token verification failed:", error.message);
       res.status(401);
-      throw new Error("Not authorized, token failed");
+      throw new Error("Not authorized, token invalid or expired");
     }
   } else {
     res.status(401);
-    throw new Error("Not authorized, no token");
+    throw new Error("Not authorized, token missing");
   }
 });

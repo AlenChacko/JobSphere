@@ -41,7 +41,7 @@ const EmployeeAuth = () => {
       }
 
       if (res && res.user && res.user._id) {
-        navigate(`/employee/dashboard/${res.user._id}`);
+        navigate("/employee/dashboard");
       }
     } catch (err) {
       // Toast already shown in slice

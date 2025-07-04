@@ -32,7 +32,7 @@ const recruiterSchema = mongoose.Schema(
       twitter: { type: String, trim: true },
     },
 
-    profileImage: { type: String, trim: true },
+    companyLogo: { type: String, trim: true },
   },
   {
     timestamps: true,

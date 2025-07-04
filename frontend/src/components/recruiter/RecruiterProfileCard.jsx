@@ -1,11 +1,18 @@
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../redux/slices/authSlice"; // make sure this import exists
+import { logout } from "../../redux/slices/authSlice";
+import { fetchRecruiterProfile } from "../../redux/slices/recruiterSlice";
 
 const RecruiterProfileCard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+
+  const { recruiterInfo, loading, error } = useSelector((state) => state.recruiter);
+
+  useEffect(() => {
+    dispatch(fetchRecruiterProfile());
+  }, [dispatch]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -16,17 +23,22 @@ const RecruiterProfileCard = () => {
     navigate("/recruiter/edit-profile");
   };
 
-  // Check if any essential fields are missing
   const isProfileIncomplete =
-    !user?.recruiterName || !user?.website || !user?.phone || !user?.companyLogo;
+    !recruiterInfo?.recruiterName ||
+    !recruiterInfo?.links?.website ||
+    !recruiterInfo?.phone ||
+    !recruiterInfo?.companyLogo;
+
+  if (loading) return <p className="text-center">Loading profile...</p>;
+  if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
     <div className="bg-white shadow-lg rounded-2xl p-6 w-full max-w-6xl mx-auto flex flex-col md:flex-row items-center md:items-start gap-6">
       {/* Company Logo */}
       <div className="w-28 h-28 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
-        {user?.companyLogo ? (
+        {recruiterInfo?.companyLogo ? (
           <img
-            src={user.companyLogo}
+            src={recruiterInfo.companyLogo}
             alt="Company Logo"
             className="w-full h-full object-cover"
           />
@@ -39,7 +51,7 @@ const RecruiterProfileCard = () => {
       <div className="flex-1 w-full">
         <div className="flex justify-between items-start mb-2">
           <h2 className="text-2xl font-bold text-gray-800">
-            {user?.companyName || "Company Name"}
+            {recruiterInfo?.companyName || "Company Name"}
           </h2>
           <button
             onClick={handleLogout}
@@ -50,25 +62,21 @@ const RecruiterProfileCard = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <div>
-            <p className="text-gray-600 font-semibold">Recruiter Name</p>
-            <p className="text-gray-700">{user?.recruiterName || "N/A"}</p>
-          </div>
-          <div>
-            <p className="text-gray-600 font-semibold">Email</p>
-            <p className="text-gray-700">{user?.email || "N/A"}</p>
-          </div>
-          <div>
-            <p className="text-gray-600 font-semibold">Website</p>
-            <p className="text-gray-700">{user?.website || "N/A"}</p>
-          </div>
-          <div>
-            <p className="text-gray-600 font-semibold">Phone</p>
-            <p className="text-gray-700">{user?.phone || "N/A"}</p>
-          </div>
+          <Info label="Recruiter Name" value={recruiterInfo?.recruiterName} />
+          <Info label="Email" value={recruiterInfo?.email} />
+          <Info label="Phone" value={recruiterInfo?.phone} />
+          <Info label="Website" value={recruiterInfo?.links?.website} />
         </div>
 
-        {/* 🔸 Incomplete profile warning */}
+        {/* About */}
+        <div className="mb-4">
+          <p className="text-gray-600 font-semibold">About Company</p>
+          <p className="text-gray-700">
+            {recruiterInfo?.aboutCompany || "Not added yet"}
+          </p>
+        </div>
+
+        {/* Incomplete Profile Warning */}
         {isProfileIncomplete && (
           <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-lg">
             <p className="font-medium">⚠️ Your profile is incomplete.</p>
@@ -84,5 +92,13 @@ const RecruiterProfileCard = () => {
     </div>
   );
 };
+
+// Reusable Info row
+const Info = ({ label, value }) => (
+  <div>
+    <p className="text-gray-600 font-semibold">{label}</p>
+    <p className="text-gray-700">{value || "Not added yet"}</p>
+  </div>
+);
 
 export default RecruiterProfileCard;

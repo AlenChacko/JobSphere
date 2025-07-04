@@ -11,7 +11,7 @@ import {
 import { useSelector } from "react-redux";
 
 const RecruiterDashboard = () => {
-  const { user } = useSelector((state) => state.auth);
+  
   const actions = [
     {
       title: "Edit Profile",
@@ -53,7 +53,7 @@ const RecruiterDashboard = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h2 className="text-3xl font-semibold mb-6">Welcome, {user.companyName}</h2>
+      <h2 className="text-3xl font-semibold mb-6 text-center">Welcome!!!</h2>
 
       {/* Profile */}
       <RecruiterProfileCard />
