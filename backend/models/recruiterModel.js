@@ -19,7 +19,10 @@ const recruiterSchema = mongoose.Schema(
     aboutCompany: { type: String, trim: true },
 
     phone: { type: String, trim: true, unique: true },
-    designation: { type: String, trim: true },
+
+    // ✅ Replaced designation with companySize
+    companySize: { type: String, trim: true }, // e.g. "11-50", "500+"
+
     location: {
       country: { type: String, trim: true },
       state: { type: String, trim: true },
@@ -31,8 +34,6 @@ const recruiterSchema = mongoose.Schema(
       website: { type: String, trim: true },
       twitter: { type: String, trim: true },
     },
-
-    companyLogo: { type: String, trim: true },
   },
   {
     timestamps: true,

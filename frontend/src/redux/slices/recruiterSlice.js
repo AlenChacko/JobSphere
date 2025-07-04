@@ -7,7 +7,7 @@ export const fetchRecruiterProfile = createAsyncThunk(
   async (_, { rejectWithValue, getState }) => {
     try {
       const {
-        auth: { token }, 
+        auth: { token },
       } = getState();
 
       const config = {
@@ -25,6 +25,36 @@ export const fetchRecruiterProfile = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch recruiter profile"
+      );
+    }
+  }
+);
+// 🔄 Update recruiter profile
+export const updateRecruiterProfile = createAsyncThunk(
+  "recruiter/updateProfile",
+  async (formData, { rejectWithValue, getState }) => {
+    try {
+      const {
+        auth: { token },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data", // Needed for FormData
+        },
+      };
+
+      const { data } = await axios.patch(
+        `${import.meta.env.VITE_BACKEND_URL}/api/recruiter/update-profile`,
+        formData,
+        config
+      );
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Failed to update profile"
       );
     }
   }
@@ -56,6 +86,19 @@ const recruiterSlice = createSlice({
         state.recruiterInfo = action.payload;
       })
       .addCase(fetchRecruiterProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(updateRecruiterProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateRecruiterProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.recruiterInfo = action.payload; // Update local state with updated profile
+      })
+      .addCase(updateRecruiterProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

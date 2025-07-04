@@ -1,10 +1,24 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchRecruiterProfile } from "../../redux/slices/recruiterSlice";
+import { useNavigate } from "react-router-dom";
+import { fetchRecruiterProfile, updateRecruiterProfile } from "../../redux/slices/recruiterSlice";
+import { toast } from "react-toastify";
+
+const companySizeOptions = [
+  "1-10",
+  "11-50",
+  "51-200",
+  "201-500",
+  "501-1000",
+  "1000+",
+];
 
 const EditRecruiter = () => {
   const [logoPreview, setLogoPreview] = useState("");
+  const [logoFile, setLogoFile] = useState(null);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { recruiterInfo, loading } = useSelector((state) => state.recruiter);
 
   const [form, setForm] = useState({
@@ -12,7 +26,7 @@ const EditRecruiter = () => {
     email: "",
     recruiterName: "",
     phone: "",
-    designation: "",
+    companySize: "",
     industry: "",
     location: {
       country: "",
@@ -38,7 +52,7 @@ const EditRecruiter = () => {
         email: recruiterInfo.email || "",
         recruiterName: recruiterInfo.recruiterName || "",
         phone: recruiterInfo.phone || "",
-        designation: recruiterInfo.designation || "",
+        companySize: recruiterInfo.companySize || "",
         industry: recruiterInfo.industry || "",
         location: {
           country: recruiterInfo.location?.country || "",
@@ -59,7 +73,6 @@ const EditRecruiter = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     if (name in form) {
       setForm({ ...form, [name]: value });
     }
@@ -80,11 +93,41 @@ const EditRecruiter = () => {
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setLogoPreview(imageUrl);
+      setLogoFile(file);
     }
   };
 
   const removePreview = () => {
     setLogoPreview("");
+    setLogoFile(null);
+  };
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    formData.append("companyName", form.companyName);
+    formData.append("recruiterName", form.recruiterName);
+    formData.append("phone", form.phone);
+    formData.append("companySize", form.companySize);
+    formData.append("industry", form.industry);
+    formData.append("aboutCompany", form.aboutCompany);
+    formData.append("country", form.location.country);
+    formData.append("state", form.location.state);
+    formData.append("city", form.location.city);
+    formData.append("linkedIn", form.links.linkedIn);
+    formData.append("website", form.links.website);
+    formData.append("twitter", form.links.twitter);
+
+    if (logoFile) {
+      formData.append("companyLogo", logoFile);
+    }
+
+    try {
+      await dispatch(updateRecruiterProfile(formData)).unwrap();
+      toast.success("Profile updated successfully");
+      navigate("/recruiter/dashboard");
+    } catch (err) {
+      toast.error(err);
+    }
   };
 
   return (
@@ -138,15 +181,20 @@ const EditRecruiter = () => {
             />
           </div>
           <div>
-            <label className="block mb-1">Designation</label>
-            <input
-              type="text"
-              name="designation"
-              value={form.designation}
+            <label className="block mb-1">Company Size</label>
+            <select
+              name="companySize"
+              value={form.companySize}
               onChange={handleChange}
-              placeholder="Designation"
-              className="w-full p-2 border rounded"
-            />
+              className="w-full p-2 border rounded bg-white"
+            >
+              <option value="">Select Size</option>
+              {companySizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block mb-1">Industry</label>
@@ -241,7 +289,7 @@ const EditRecruiter = () => {
           ></textarea>
         </div>
 
-        {/* Company Logo Only */}
+        {/* Company Logo */}
         <div>
           <label className="block mb-2">Company Logo</label>
           <input
@@ -272,9 +320,11 @@ const EditRecruiter = () => {
         <div className="text-center">
           <button
             type="button"
+            onClick={handleSubmit}
             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            disabled={loading}
           >
-            Save Changes
+            {loading ? "Saving..." : "Save Changes"}
           </button>
         </div>
       </form>

@@ -65,7 +65,14 @@ const RecruiterProfileCard = () => {
           <Info label="Recruiter Name" value={recruiterInfo?.recruiterName} />
           <Info label="Email" value={recruiterInfo?.email} />
           <Info label="Phone" value={recruiterInfo?.phone} />
+          <Info label="Company Size" value={recruiterInfo?.companySize} />
+          <Info label="Industry" value={recruiterInfo?.industry} />
           <Info label="Website" value={recruiterInfo?.links?.website} />
+          <Info label="LinkedIn" value={recruiterInfo?.links?.linkedIn} />
+          <Info label="Twitter" value={recruiterInfo?.links?.twitter} />
+          <Info label="Country" value={recruiterInfo?.location?.country} />
+          <Info label="State" value={recruiterInfo?.location?.state} />
+          <Info label="City" value={recruiterInfo?.location?.city} />
         </div>
 
         {/* About */}
