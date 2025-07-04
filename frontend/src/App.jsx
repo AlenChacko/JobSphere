@@ -49,7 +49,7 @@ const App = () => {
         }
       />
       <Route
-        path="/recruiter/dashboard/:id"
+        path="/recruiter/dashboard"
         element={
           <PrivateRoute allowedRoles={['recruiter']}>
             <RecruiterDashboard />

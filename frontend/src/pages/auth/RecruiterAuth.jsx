@@ -49,7 +49,7 @@ const RecruiterAuth = () => {
       }
 
       if (res && res.user && res.user._id) {
-        navigate(`/recruiter/dashboard/${res.user._id}`);
+        navigate("/recruiter/dashboard");
       }
     } catch (err) {
       console.error("Auth error:", err);

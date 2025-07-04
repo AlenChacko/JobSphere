@@ -31,7 +31,6 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/auth',authRouter)
-app.use('/api/recruiter',recruiterRouter)
 
 app.use(notFound);
 app.use(errorHandler);
