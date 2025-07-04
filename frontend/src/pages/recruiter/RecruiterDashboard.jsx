@@ -8,8 +8,10 @@ import {
   FaUserEdit,
   FaChartBar,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 const RecruiterDashboard = () => {
+  const { user } = useSelector((state) => state.auth);
   const actions = [
     {
       title: "Edit Profile",
@@ -27,7 +29,7 @@ const RecruiterDashboard = () => {
       title: "View Posted Jobs",
       icon: <FaList className="text-purple-600 text-3xl" />,
       description: "See all the jobs you've posted.",
-      path: "/recruiter/view-jobs",
+      path: "/recruiter/view- jobs",
     },
     {
       title: "View Applications",
@@ -51,7 +53,7 @@ const RecruiterDashboard = () => {
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
-      <h2 className="text-3xl font-semibold mb-6">Welcome, Recruiter</h2>
+      <h2 className="text-3xl font-semibold mb-6">Welcome, {user.companyName}</h2>
 
       {/* Profile */}
       <RecruiterProfileCard />
