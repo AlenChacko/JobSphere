@@ -8,6 +8,7 @@ import RecruiterDashboard from './pages/recruiter/RecruiterDashboard';
 
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
+import EditRecruiter from './pages/recruiter/EditRecruiter';
 
 const App = () => {
   return (
@@ -52,6 +53,14 @@ const App = () => {
         element={
           <PrivateRoute allowedRoles={['recruiter']}>
             <RecruiterDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/recruiter/edit-profile"
+        element={
+          <PrivateRoute allowedRoles={['recruiter']}>
+            <EditRecruiter />
           </PrivateRoute>
         }
       />
