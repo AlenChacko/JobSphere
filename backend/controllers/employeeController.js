@@ -71,6 +71,9 @@ export const updateEmployeeProfile = handler(async (req, res) => {
   employee.phone = req.body.phone || employee.phone;
   employee.designation = req.body.designation || employee.designation;
 
+  // ✅ Update About Me
+  employee.aboutMe = req.body.aboutMe || employee.aboutMe || "";
+
   // ✅ Location
   employee.employeeInfo.location = {
     country: req.body.country || employee.employeeInfo?.location?.country || "",

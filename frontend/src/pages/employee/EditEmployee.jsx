@@ -27,6 +27,7 @@ const EditEmployee = () => {
     linkedIn: "",
     portfolio: "",
     email: "",
+    aboutMe: "",
   });
 
   const [experience, setExperience] = useState([]);
@@ -47,68 +48,68 @@ const EditEmployee = () => {
     dispatch(fetchEmployeeProfile());
   }, [dispatch]);
 
-useEffect(() => {
-  if (employeeInfo) {
-    setFormData({
-      firstName: employeeInfo.firstName || "",
-      lastName: employeeInfo.lastName || "",
-      email: employeeInfo.email || "",
-      phone: employeeInfo.phone || "",
-      designation: employeeInfo.designation || "",
-      country: employeeInfo.employeeInfo?.location?.country || "",
-      state: employeeInfo.employeeInfo?.location?.state || "",
-      city: employeeInfo.employeeInfo?.location?.city || "",
-      skills: employeeInfo.employeeInfo?.skills?.join(", ") || "",
-      github: employeeInfo.links?.github || "",
-      linkedIn: employeeInfo.links?.linkedIn || "",
-      portfolio: employeeInfo.links?.portfolio || "",
-    });
+  useEffect(() => {
+    if (employeeInfo) {
+      setFormData({
+        firstName: employeeInfo.firstName || "",
+        lastName: employeeInfo.lastName || "",
+        email: employeeInfo.email || "",
+        phone: employeeInfo.phone || "",
+        designation: employeeInfo.designation || "",
+        country: employeeInfo.employeeInfo?.location?.country || "",
+        state: employeeInfo.employeeInfo?.location?.state || "",
+        city: employeeInfo.employeeInfo?.location?.city || "",
+        skills: employeeInfo.employeeInfo?.skills?.join(", ") || "",
+        github: employeeInfo.links?.github || "",
+        linkedIn: employeeInfo.links?.linkedIn || "",
+        portfolio: employeeInfo.links?.portfolio || "",
+        aboutMe: employeeInfo.aboutMe || "",
+      });
 
-    const rawExperience = employeeInfo.employeeInfo?.experience || [];
-    const safeExperience = Array.isArray(rawExperience)
-      ? rawExperience.map((exp) =>
-          typeof exp === "object" && exp !== null
-            ? exp
-            : {
-                company: "",
-                designation: "",
-                from: "",
-                to: "",
-                currentlyWorking: false,
-              }
-        )
-      : [];
+      const rawExperience = employeeInfo.employeeInfo?.experience || [];
+      const safeExperience = Array.isArray(rawExperience)
+        ? rawExperience.map((exp) =>
+            typeof exp === "object" && exp !== null
+              ? exp
+              : {
+                  company: "",
+                  designation: "",
+                  from: "",
+                  to: "",
+                  currentlyWorking: false,
+                }
+          )
+        : [];
 
-    setExperience(safeExperience);
+      setExperience(safeExperience);
 
-    setCurrentRole(
-      employeeInfo.employeeInfo?.currentRole || {
-        title: "",
-        from: "",
-        to: "",
-        currentlyWorking: false,
-      }
-    );
+      setCurrentRole(
+        employeeInfo.employeeInfo?.currentRole || {
+          title: "",
+          from: "",
+          to: "",
+          currentlyWorking: false,
+        }
+      );
 
-    const rawEducation = employeeInfo.employeeInfo?.education || [];
-    const safeEducation = Array.isArray(rawEducation)
-      ? rawEducation.map((edu) =>
-          typeof edu === "object" && edu !== null
-            ? edu
-            : {
-                institute: "",
-                degree: "",
-                from: "",
-                to: "",
-                currentlyStudying: false,
-              }
-        )
-      : [];
+      const rawEducation = employeeInfo.employeeInfo?.education || [];
+      const safeEducation = Array.isArray(rawEducation)
+        ? rawEducation.map((edu) =>
+            typeof edu === "object" && edu !== null
+              ? edu
+              : {
+                  institute: "",
+                  degree: "",
+                  from: "",
+                  to: "",
+                  currentlyStudying: false,
+                }
+          )
+        : [];
 
-    setEducation(safeEducation);
-  }
-}, [employeeInfo]);
-
+      setEducation(safeEducation);
+    }
+  }, [employeeInfo]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -239,6 +240,15 @@ useEffect(() => {
           onChange={handleChange}
         />
       </div>
+      <h3 className="text-xl font-semibold">About Me</h3>
+      <textarea
+        name="aboutMe"
+        rows={5}
+        className="input resize-none"
+        placeholder="Tell us about yourself..."
+        value={formData.aboutMe}
+        onChange={handleChange}
+      />
 
       <h3 className="text-xl font-semibold">Location</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -338,9 +348,7 @@ useEffect(() => {
           <select
             className="input"
             value={exp.to}
-            onChange={(e) =>
-              handleExperienceChange(idx, "to", e.target.value)
-            }
+            onChange={(e) => handleExperienceChange(idx, "to", e.target.value)}
           >
             <option value="">To</option>
             {years.map((year) => (

@@ -9,6 +9,7 @@ import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import EditRecruiter from "./pages/recruiter/EditRecruiter";
 import EditEmployee from "./pages/employee/EditEmployee";
+import AddJob from "./pages/recruiter/AddJob";
 
 const App = () => {
   return (
@@ -81,6 +82,14 @@ const App = () => {
         element={
           <PrivateRoute allowedRoles={["recruiter"]}>
             <EditRecruiter />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/recruiter/post-job"
+        element={
+          <PrivateRoute allowedRoles={["recruiter"]}>
+            <AddJob />
           </PrivateRoute>
         }
       />

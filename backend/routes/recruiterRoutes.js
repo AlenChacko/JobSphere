@@ -3,6 +3,7 @@ import express from "express";
 import { upload } from "../middleware/multer.js";
 import { protectRecruiter } from "../middleware/authMiddleware.js";
 import {
+  createJob,
   getRecruiterProfile,
   updateRecruiterProfile,
 } from "../controllers/recruiterController.js";
@@ -16,3 +17,7 @@ recruiterRouter.patch(
   upload.single("companyLogo"),
   updateRecruiterProfile
 );
+
+
+
+recruiterRouter.post("/create-job", protectRecruiter, createJob);

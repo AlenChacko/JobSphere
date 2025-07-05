@@ -1,6 +1,7 @@
 import cloudinary from "../utils/cloudinary.js";
 import handler from 'express-async-handler'
 import { Recruiter } from "../models/recruiterModel.js";
+import { Job } from "../models/jobModel.js";
 
 
 export const getRecruiterProfile = handler(async (req, res) => {
@@ -68,4 +69,47 @@ export const updateRecruiterProfile = handler(async (req, res) => {
   const updatedRecruiter = await recruiter.save();
 
   res.status(200).json(updatedRecruiter);
+});
+
+
+export const createJob = handler(async (req, res) => {
+  const recruiterId = req.user._id;
+
+  const {
+    title,
+    company,
+    location,
+    jobType,
+    experienceLevel,
+    salaryRange,
+    skillsRequired,
+    description,
+    openings,
+    deadline,
+  } = req.body;
+
+  // Basic validations
+  if (!title || !company || !location || !jobType || !experienceLevel || !description) {
+    res.status(400);
+    throw new Error("Please fill in all required fields.");
+  }
+
+  const job = new Job({
+    recruiter: recruiterId,
+    title,
+    company,
+    location,
+    jobType,
+    experienceLevel,
+    salaryRange,
+    skillsRequired: Array.isArray(skillsRequired)
+      ? skillsRequired
+      : skillsRequired.split(",").map((skill) => skill.trim()),
+    description,
+    openings: openings || 1,
+    deadline,
+  });
+
+  const createdJob = await job.save();
+  res.status(201).json(createdJob);
 });
