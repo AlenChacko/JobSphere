@@ -14,7 +14,9 @@ const employeeSchema = mongoose.Schema(
     password: { type: String, required: true, trim: true },
     role: { type: String, default: "employee" },
 
-    phone: { type: String, unique: true, trim: true }, 
+    phone: { type: String, unique: true, trim: true },
+
+    designation: { type: String, trim: true },
 
     employeeInfo: {
       location: {
@@ -22,16 +24,45 @@ const employeeSchema = mongoose.Schema(
         state: { type: String, trim: true },
         city: { type: String, trim: true },
       },
-      experience: { type: String, trim: true },
-      currentRole: { type: String, trim: true },
+
+      experience: [
+        {
+          company: { type: String, trim: true },
+          designation: { type: String, trim: true },
+          from: { type: String, trim: true }, // e.g., "2023"
+          to: { type: String, trim: true },   // e.g., "2025"
+          currentlyWorking: { type: Boolean, default: false },
+        },
+      ],
+
+      currentRole: {
+        title: { type: String, trim: true },
+        from: { type: String, trim: true },
+        to: { type: String, trim: true },
+        currentlyWorking: { type: Boolean, default: false },
+      },
+
       skills: {
         type: [String],
         default: [],
       },
-      education: { type: String, trim: true },
+
+      education: [
+        {
+          institute: { type: String, trim: true },
+          degree: { type: String, trim: true },
+          from: { type: String, trim: true },
+          to: { type: String, trim: true },
+          currentlyStudying: { type: Boolean, default: false },
+        },
+      ],
     },
 
-    resumeUrl: { type: String, trim: true },
+    resume: {
+      url: { type: String, trim: true },
+      publicId: { type: String, trim: true },
+    },
+
     profileImage: { type: String, trim: true },
 
     links: {

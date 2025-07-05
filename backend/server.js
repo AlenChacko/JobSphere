@@ -8,6 +8,7 @@ import { connectDB } from "./config/database.js";
 import { errorHandler, notFound } from "./middleware/errorMiddlware.js";
 import { authRouter } from "./routes/authRoutes.js";
 import { recruiterRouter } from "./routes/recruiterRoutes.js";
+import { employeeRouter } from "./routes/employeeRoutes.js";
 
 dotenv.config();
 connectDB();
@@ -32,6 +33,7 @@ app.get("/", (req, res) => {
 
 app.use('/api/auth',authRouter)
 app.use('/api/recruiter',recruiterRouter)
+app.use('/api/employee',employeeRouter)
 
 app.use(notFound);
 app.use(errorHandler);

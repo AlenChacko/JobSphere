@@ -8,6 +8,7 @@ import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import PrivateRoute from "./routes/PrivateRoute";
 import PublicRoute from "./routes/PublicRoute";
 import EditRecruiter from "./pages/recruiter/EditRecruiter";
+import EditEmployee from "./pages/employee/EditEmployee";
 
 const App = () => {
   return (
@@ -40,10 +41,23 @@ const App = () => {
 
       {/* Private routes */}
       <Route
+        path="/employee/dashboard/:id"
+        element={<Navigate to="/employee/dashboard" replace />}
+      />
+
+      <Route
         path="/employee/dashboard"
         element={
           <PrivateRoute allowedRoles={["employee"]}>
             <EmployeeDashboard />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/employee/edit-profile"
+        element={
+          <PrivateRoute allowedRoles={["employee"]}>
+            <EditEmployee />
           </PrivateRoute>
         }
       />
