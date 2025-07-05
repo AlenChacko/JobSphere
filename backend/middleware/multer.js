@@ -1,13 +1,16 @@
 import multer from "multer";
 
-const storage = multer.diskStorage({}); // No need to store on disk
+const storage = multer.diskStorage({}); // still fine
 
 const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/webp"
-  ) {
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "application/pdf", // ✅ allow resumes
+  ];
+
+  if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(new Error("Unsupported file format"), false);
@@ -15,4 +18,3 @@ const fileFilter = (req, file, cb) => {
 };
 
 export const upload = multer({ storage, fileFilter });
-
