@@ -9,7 +9,10 @@ export const registerEmployee = createAsyncThunk(
   "auth/registerEmployee",
   async (formData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(`${API}/api/auth/register-employee`, formData);
+      const { data } = await axios.post(
+        `${API}/api/auth/register-employee`,
+        formData
+      );
       toast.success(data.message);
       return {
         user: {
@@ -33,7 +36,10 @@ export const loginEmployee = createAsyncThunk(
   "auth/loginEmployee",
   async (formData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(`${API}/api/auth/login-employee`, formData);
+      const { data } = await axios.post(
+        `${API}/api/auth/login-employee`,
+        formData
+      );
       toast.success(data.message);
       return {
         user: {
@@ -57,7 +63,10 @@ export const registerRecruiter = createAsyncThunk(
   "auth/registerRecruiter",
   async (formData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(`${API}/api/auth/register-recruiter`, formData);
+      const { data } = await axios.post(
+        `${API}/api/auth/register-recruiter`,
+        formData
+      );
       toast.success(data.message);
       return {
         user: {
@@ -69,7 +78,9 @@ export const registerRecruiter = createAsyncThunk(
         role: "recruiter",
       };
     } catch (err) {
-      toast.error(err.response?.data?.message || "Recruiter registration failed");
+      toast.error(
+        err.response?.data?.message || "Recruiter registration failed"
+      );
       return rejectWithValue(err.response?.data?.message);
     }
   }
@@ -80,7 +91,10 @@ export const loginRecruiter = createAsyncThunk(
   "auth/loginRecruiter",
   async (formData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(`${API}/api/auth/login-recruiter`, formData);
+      const { data } = await axios.post(
+        `${API}/api/auth/login-recruiter`,
+        formData
+      );
       toast.success(data.message);
       return {
         user: {

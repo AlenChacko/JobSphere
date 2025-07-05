@@ -27,7 +27,7 @@ const EmployeeProfileCard = () => {
 
   const isProfileIncomplete =
     !employeeInfo?.fullName ||
-    !employeeInfo?.profession ||
+    !employeeInfo?.designation ||
     !employeeInfo?.profileImage;
 
   if (loading) return <p className="text-center">Loading profile...</p>;
@@ -56,7 +56,7 @@ const EmployeeProfileCard = () => {
           }`.trim() || "Full Name"}
         </h2>
         <p className="text-sm text-gray-500">
-          {employeeInfo?.profession || "Add Profession"}
+          {employeeInfo?.designation || "Add Profession"}
         </p>
 
         <button
