@@ -4,6 +4,8 @@ import { upload } from "../middleware/multer.js";
 import { protectRecruiter } from "../middleware/authMiddleware.js";
 import {
   createJob,
+  deleteJob,
+  getRecruiterJobs,
   getRecruiterProfile,
   updateRecruiterProfile,
 } from "../controllers/recruiterController.js";
@@ -21,3 +23,6 @@ recruiterRouter.patch(
 
 
 recruiterRouter.post("/create-job", protectRecruiter, createJob);
+
+recruiterRouter.get("/view-jobs", protectRecruiter, getRecruiterJobs);
+recruiterRouter.delete("/delete-job/:jobId", protectRecruiter, deleteJob);

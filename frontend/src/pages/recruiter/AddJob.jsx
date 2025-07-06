@@ -46,7 +46,7 @@ const AddJob = () => {
 
     if (result.type.includes("fulfilled")) {
       toast.success("Job posted successfully!");
-      navigate("/recruiter/jobs");
+      navigate("/recruiter/view-jobs");
     } else {
       toast.error(result.payload || "Failed to post job");
     }

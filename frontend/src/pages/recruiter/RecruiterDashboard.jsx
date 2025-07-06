@@ -29,7 +29,7 @@ const RecruiterDashboard = () => {
       title: "View Posted Jobs",
       icon: <FaList className="text-purple-600 text-3xl" />,
       description: "See all the jobs you've posted.",
-      path: "/recruiter/view- jobs",
+      path: "/recruiter/view-jobs",
     },
     {
       title: "View Applications",

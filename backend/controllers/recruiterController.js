@@ -113,3 +113,31 @@ export const createJob = handler(async (req, res) => {
   const createdJob = await job.save();
   res.status(201).json(createdJob);
 });
+
+export const getRecruiterJobs = handler(async (req, res) => {
+  const recruiterId = req.user._id;
+
+  const jobs = await Job.find({ recruiter: recruiterId }).sort({ createdAt: -1 });
+
+  res.status(200).json(jobs);
+});
+
+export const deleteJob = handler(async (req, res) => {
+  const recruiterId = req.user._id;
+  const jobId = req.params.jobId;
+
+  const job = await Job.findById(jobId);
+
+  if (!job) {
+    res.status(404);
+    throw new Error("Job not found");
+  }
+
+  if (job.recruiter.toString() !== recruiterId.toString()) {
+    res.status(401);
+    throw new Error("Not authorized to delete this job");
+  }
+
+  await job.deleteOne();
+  res.status(200).json({ message: "Job deleted successfully" });
+});
