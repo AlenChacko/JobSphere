@@ -8,6 +8,7 @@ import {
   getJobById,
   getRecruiterJobs,
   getRecruiterProfile,
+  updateJob,
   updateRecruiterProfile,
 } from "../controllers/recruiterController.js";
 
@@ -28,3 +29,4 @@ recruiterRouter.post("/create-job", protectRecruiter, createJob);
 recruiterRouter.get("/view-jobs", protectRecruiter, getRecruiterJobs);
 recruiterRouter.delete("/delete-job/:jobId", protectRecruiter, deleteJob);
 recruiterRouter.get("/get-job/:id", protectRecruiter, getJobById);
+recruiterRouter.put("/update-job/:id", protectRecruiter, updateJob);

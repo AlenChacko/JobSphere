@@ -117,6 +117,37 @@ export const fetchJobById = createAsyncThunk(
   }
 );
 
+// 🔄 Update Job
+export const updateJob = createAsyncThunk(
+  "jobs/updateJob",
+  async ({ id, updatedData }, { rejectWithValue, getState }) => {
+    try {
+      const {
+        auth: { token },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        `${API}/api/recruiter/update-job/${id}`,
+        updatedData,
+        config
+      );
+
+      return data; // updated job object
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to update job"
+      );
+    }
+  }
+);
+
+
 // 🔹 Job Slice
 const jobSlice = createSlice({
   name: "jobs",
@@ -199,7 +230,32 @@ const jobSlice = createSlice({
         state.error = action.payload;
         state.job = null;
         toast.error(action.payload || "Failed to fetch job");
-      });
+      })
+
+      // 🔄 Update Job
+.addCase(updateJob.pending, (state) => {
+  state.loading = true;
+  state.error = null;
+  state.success = false;
+})
+.addCase(updateJob.fulfilled, (state, action) => {
+  state.loading = false;
+  state.success = true;
+
+  // Update job in jobs array (if already fetched)
+  const updatedJob = action.payload;
+  state.jobs = state.jobs.map((job) =>
+    job._id === updatedJob._id ? updatedJob : job
+  );
+
+  toast.success("Job updated successfully");
+})
+.addCase(updateJob.rejected, (state, action) => {
+  state.loading = false;
+  state.error = action.payload;
+  toast.error(action.payload || "Failed to update job");
+});
+
   },
 });
 

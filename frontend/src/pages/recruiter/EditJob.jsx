@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { fetchJobById } from "../../redux/slices/jobSlice";
+import { fetchJobById, updateJob } from "../../redux/slices/jobSlice";
 
 const jobTypes = ["Full-Time", "Part-Time", "Contract", "Internship", "Remote"];
 const experienceLevels = ["Fresher", "Mid-Level", "Senior", "Manager"];
@@ -60,7 +60,22 @@ const EditJob = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Update logic here
+
+    const updatedData = {
+      ...formData,
+      skillsRequired: formData.skillsRequired
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter(Boolean),
+    };
+
+    const result = await dispatch(updateJob({ id, updatedData }));
+
+    if (result.type.includes("fulfilled")) {
+      navigate("/recruiter/view-jobs");
+    } else {
+      toast.error(result.payload || "Failed to update job");
+    }
   };
 
   return (
@@ -70,6 +85,7 @@ const EditJob = () => {
     >
       <h2 className="text-3xl font-bold">Edit Job</h2>
 
+      {/* --- Job Title --- */}
       <div>
         <label className="block mb-1 font-medium">Job Title</label>
         <input
@@ -82,6 +98,7 @@ const EditJob = () => {
         />
       </div>
 
+      {/* --- Company --- */}
       <div>
         <label className="block mb-1 font-medium">Company Name</label>
         <input
@@ -94,6 +111,7 @@ const EditJob = () => {
         />
       </div>
 
+      {/* --- Location --- */}
       <div>
         <label className="block mb-1 font-medium">Location</label>
         <input
@@ -106,6 +124,7 @@ const EditJob = () => {
         />
       </div>
 
+      {/* --- Job Type & Experience --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-1 font-medium">Job Type</label>
@@ -144,6 +163,7 @@ const EditJob = () => {
         </div>
       </div>
 
+      {/* --- Salary Range --- */}
       <div>
         <label className="block mb-1 font-medium">Salary Range</label>
         <input
@@ -155,6 +175,7 @@ const EditJob = () => {
         />
       </div>
 
+      {/* --- Skills --- */}
       <div>
         <label className="block mb-1 font-medium">Skills Required</label>
         <input
@@ -166,6 +187,7 @@ const EditJob = () => {
         />
       </div>
 
+      {/* --- Description --- */}
       <div>
         <label className="block mb-1 font-medium">Job Description</label>
         <textarea
@@ -178,6 +200,7 @@ const EditJob = () => {
         />
       </div>
 
+      {/* --- Openings & Deadline --- */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className="block mb-1 font-medium">Number of Openings</label>
@@ -203,6 +226,7 @@ const EditJob = () => {
         </div>
       </div>
 
+      {/* --- Submit Button --- */}
       <button
         type="submit"
         className="bg-blue-600 text-white font-medium px-6 py-2 rounded hover:bg-blue-700 transition-all"

@@ -159,3 +159,58 @@ export const getJobById = handler(async (req, res) => {
 
   res.status(200).json(job);
 });
+
+
+export const updateJob = handler(async (req, res) => {
+  const jobId = req.params.id;
+
+  const job = await Job.findById(jobId);
+
+  if (!job) {
+    res.status(404);
+    throw new Error("Job not found");
+  }
+
+  // 🔐 Check ownership
+  if (job.recruiter.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("You are not authorized to update this job");
+  }
+
+  const {
+    title,
+    company,
+    location,
+    jobType,
+    experienceLevel,
+    salaryRange,
+    skillsRequired,
+    description,
+    openings,
+    deadline,
+  } = req.body;
+
+  // ✅ Basic validations
+  if (!title || !company || !location || !jobType || !experienceLevel || !description) {
+    res.status(400);
+    throw new Error("Please fill in all required fields.");
+  }
+
+  // ✏️ Update fields
+  job.title = title;
+  job.company = company;
+  job.location = location;
+  job.jobType = jobType;
+  job.experienceLevel = experienceLevel;
+  job.salaryRange = salaryRange;
+  job.skillsRequired = Array.isArray(skillsRequired)
+    ? skillsRequired
+    : skillsRequired.split(",").map((skill) => skill.trim());
+  job.description = description;
+  job.openings = openings || 1;
+  job.deadline = deadline;
+
+  const updatedJob = await job.save();
+
+  res.status(200).json(updatedJob);
+});
