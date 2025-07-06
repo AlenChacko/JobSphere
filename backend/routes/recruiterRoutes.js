@@ -5,6 +5,7 @@ import { protectRecruiter } from "../middleware/authMiddleware.js";
 import {
   createJob,
   deleteJob,
+  getJobById,
   getRecruiterJobs,
   getRecruiterProfile,
   updateRecruiterProfile,
@@ -26,3 +27,4 @@ recruiterRouter.post("/create-job", protectRecruiter, createJob);
 
 recruiterRouter.get("/view-jobs", protectRecruiter, getRecruiterJobs);
 recruiterRouter.delete("/delete-job/:jobId", protectRecruiter, deleteJob);
+recruiterRouter.get("/get-job/:id", protectRecruiter, getJobById);

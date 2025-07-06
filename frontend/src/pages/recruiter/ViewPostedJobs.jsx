@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecruiterJobs, deleteJob } from "../../redux/slices/jobSlice";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const ViewPostedJobs = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { jobs, loading, error } = useSelector((state) => state.jobs);
 
@@ -93,6 +95,7 @@ const ViewPostedJobs = () => {
               {/* 🔻 Edit & Delete Buttons */}
               <div className="flex justify-end gap-3 mt-5">
                 <button
+                  onClick={() => navigate(`/recruiter/edit-job/${job._id}`)}
                   className="px-4 py-1 bg-yellow-500 hover:bg-yellow-600 text-white text-sm rounded shadow"
                 >
                   Edit

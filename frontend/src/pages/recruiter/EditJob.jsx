@@ -1,20 +1,20 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { createJob } from "../../redux/slices/jobSlice";
+import { fetchJobById } from "../../redux/slices/jobSlice";
 
 const jobTypes = ["Full-Time", "Part-Time", "Contract", "Internship", "Remote"];
 const experienceLevels = ["Fresher", "Mid-Level", "Senior", "Manager"];
 
-const AddJob = () => {
+const EditJob = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { recruiterInfo } = useSelector((state) => state.recruiter);
+  const { id } = useParams();
 
   const [formData, setFormData] = useState({
     title: "",
-    company: recruiterInfo?.company || "",
+    company: "",
     location: "",
     jobType: "",
     experienceLevel: "",
@@ -25,6 +25,32 @@ const AddJob = () => {
     deadline: "",
   });
 
+  useEffect(() => {
+    dispatch(fetchJobById(id)).then((res) => {
+      if (res.payload) {
+        const job = res.payload;
+        setFormData({
+          title: job.title || "",
+          company: job.company || "",
+          location: job.location || "",
+          jobType: job.jobType || "",
+          experienceLevel: job.experienceLevel || "",
+          salaryRange: job.salaryRange || "",
+          skillsRequired: Array.isArray(job.skillsRequired)
+            ? job.skillsRequired.join(", ")
+            : "",
+          description: job.description || "",
+          openings: job.openings || 1,
+          deadline: job.deadline
+            ? new Date(job.deadline).toISOString().slice(0, 10)
+            : "",
+        });
+      } else {
+        toast.error("Job not found");
+      }
+    });
+  }, [dispatch, id]);
+
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
@@ -34,22 +60,7 @@ const AddJob = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const jobData = {
-      ...formData,
-      skillsRequired: formData.skillsRequired
-        .split(",")
-        .map((skill) => skill.trim()),
-    };
-
-    const result = await dispatch(createJob(jobData));
-
-    if (result.type.includes("fulfilled")) {
-      toast.success("Job posted successfully!");
-      navigate("/recruiter/view-jobs");
-    } else {
-      toast.error(result.payload || "Failed to post job");
-    }
+    // Update logic here
   };
 
   return (
@@ -57,7 +68,7 @@ const AddJob = () => {
       onSubmit={handleSubmit}
       className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-xl space-y-6"
     >
-      <h2 className="text-3xl font-bold">Post a New Job</h2>
+      <h2 className="text-3xl font-bold">Edit Job</h2>
 
       <div>
         <label className="block mb-1 font-medium">Job Title</label>
@@ -65,7 +76,6 @@ const AddJob = () => {
           type="text"
           name="title"
           className="w-full border border-gray-300 rounded px-4 py-2"
-          placeholder="Job Title"
           value={formData.title}
           onChange={handleChange}
           required
@@ -78,7 +88,6 @@ const AddJob = () => {
           type="text"
           name="company"
           className="w-full border border-gray-300 rounded px-4 py-2"
-          placeholder="Company Name"
           value={formData.company}
           onChange={handleChange}
           required
@@ -91,7 +100,6 @@ const AddJob = () => {
           type="text"
           name="location"
           className="w-full border border-gray-300 rounded px-4 py-2"
-          placeholder="Location"
           value={formData.location}
           onChange={handleChange}
           required
@@ -142,7 +150,6 @@ const AddJob = () => {
           type="text"
           name="salaryRange"
           className="w-full border border-gray-300 rounded px-4 py-2"
-          placeholder="Salary Range (e.g. 5-8 LPA)"
           value={formData.salaryRange}
           onChange={handleChange}
         />
@@ -154,7 +161,6 @@ const AddJob = () => {
           type="text"
           name="skillsRequired"
           className="w-full border border-gray-300 rounded px-4 py-2"
-          placeholder="Skills (comma separated)"
           value={formData.skillsRequired}
           onChange={handleChange}
         />
@@ -165,7 +171,6 @@ const AddJob = () => {
         <textarea
           name="description"
           className="w-full border border-gray-300 rounded px-4 py-2"
-          placeholder="Job Description"
           rows="4"
           value={formData.description}
           onChange={handleChange}
@@ -180,7 +185,6 @@ const AddJob = () => {
             type="number"
             name="openings"
             className="w-full border border-gray-300 rounded px-4 py-2"
-            placeholder="Number of Openings"
             min={1}
             value={formData.openings}
             onChange={handleChange}
@@ -203,10 +207,10 @@ const AddJob = () => {
         type="submit"
         className="bg-blue-600 text-white font-medium px-6 py-2 rounded hover:bg-blue-700 transition-all"
       >
-        Post Job
+        Update Job
       </button>
     </form>
   );
 };
 
-export default AddJob;
+export default EditJob;

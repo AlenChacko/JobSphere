@@ -19,7 +19,11 @@ export const createJob = createAsyncThunk(
         },
       };
 
-      const { data } = await axios.post(`${API}/api/recruiter/create-job`, jobData, config);
+      const { data } = await axios.post(
+        `${API}/api/recruiter/create-job`,
+        jobData,
+        config
+      );
       return data;
     } catch (err) {
       return rejectWithValue(
@@ -44,10 +48,12 @@ export const fetchRecruiterJobs = createAsyncThunk(
         },
       };
 
-      const { data } = await axios.get(`${API}/api/recruiter/view-jobs`, config);
-      
-      return data; // array of jobs
+      const { data } = await axios.get(
+        `${API}/api/recruiter/view-jobs`,
+        config
+      );
 
+      return data; // array of jobs
     } catch (err) {
       return rejectWithValue(
         err.response?.data?.message || "Failed to fetch jobs"
@@ -75,11 +81,37 @@ export const deleteJob = createAsyncThunk(
         config
       );
 
-
       return { jobId }; // return deleted jobId to update state
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to delete job"
+      );
+    }
+  }
+);
+export const fetchJobById = createAsyncThunk(
+  "jobs/fetchJobById",
+  async (id, { rejectWithValue, getState }) => {
+    try {
+      const {
+        auth: { token },
+      } = getState();
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.get(
+        `${API}/api/recruiter/get-job/${id}`,
+        config
+      );
+
+      return data; // single job object
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Failed to fetch job"
       );
     }
   }
@@ -103,53 +135,72 @@ const jobSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-  builder
-    // 🔹 Create Job
-    .addCase(createJob.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-      state.success = false;
-    })
-    .addCase(createJob.fulfilled, (state, action) => {
-      state.loading = false;
-      state.success = true;
-      state.jobs.push(action.payload);
-    })
-    .addCase(createJob.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-      toast.error(action.payload || "Failed to create job");
-    })
+    builder
+      // 🔹 Create Job
+      .addCase(createJob.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.success = false;
+      })
+      .addCase(createJob.fulfilled, (state, action) => {
+        state.loading = false;
+        state.success = true;
+        state.jobs.push(action.payload);
+      })
+      .addCase(createJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(action.payload || "Failed to create job");
+      })
 
-    // 🔹 Fetch Recruiter Jobs
-    .addCase(fetchRecruiterJobs.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    })
-    .addCase(fetchRecruiterJobs.fulfilled, (state, action) => {
-      state.loading = false;
-      state.jobs = action.payload;
-    })
-    .addCase(fetchRecruiterJobs.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-      toast.error(action.payload || "Failed to fetch jobs");
-    })
+      // 🔹 Fetch Recruiter Jobs
+      .addCase(fetchRecruiterJobs.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchRecruiterJobs.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobs = action.payload;
+      })
+      .addCase(fetchRecruiterJobs.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(action.payload || "Failed to fetch jobs");
+      })
 
-     .addCase(deleteJob.pending, (state) => {
-      state.loading = true;
-    })
-    .addCase(deleteJob.fulfilled, (state, action) => {
-      state.loading = false;
-      state.jobs = state.jobs.filter((job) => job._id !== action.payload.jobId);
-      toast.success("Job deleted successfully");
-    })
-    .addCase(deleteJob.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-      toast.error(action.payload);
-    });
-}
+      .addCase(deleteJob.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteJob.fulfilled, (state, action) => {
+        state.loading = false;
+        state.jobs = state.jobs.filter(
+          (job) => job._id !== action.payload.jobId
+        );
+        toast.success("Job deleted successfully");
+      })
+      .addCase(deleteJob.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        toast.error(action.payload);
+      })
+
+      // 🔹 Fetch Job by ID
+      .addCase(fetchJobById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.job = null;
+      })
+      .addCase(fetchJobById.fulfilled, (state, action) => {
+        state.loading = false;
+        state.job = action.payload;
+      })
+      .addCase(fetchJobById.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+        state.job = null;
+        toast.error(action.payload || "Failed to fetch job");
+      });
+  },
 });
 
 export const { clearJobState } = jobSlice.actions;

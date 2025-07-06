@@ -11,6 +11,7 @@ import EditRecruiter from "./pages/recruiter/EditRecruiter";
 import EditEmployee from "./pages/employee/EditEmployee";
 import AddJob from "./pages/recruiter/AddJob";
 import ViewPostedJobs from "./pages/recruiter/ViewPostedJobs";
+import EditJob from "./pages/recruiter/EditJob";
 
 const App = () => {
   return (
@@ -99,6 +100,14 @@ const App = () => {
         element={
           <PrivateRoute allowedRoles={["recruiter"]}>
             <ViewPostedJobs />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/recruiter/edit-job/:id"
+        element={
+          <PrivateRoute allowedRoles={["recruiter"]}>
+            <EditJob />
           </PrivateRoute>
         }
       />

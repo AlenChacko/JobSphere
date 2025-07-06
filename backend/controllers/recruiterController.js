@@ -141,3 +141,21 @@ export const deleteJob = handler(async (req, res) => {
   await job.deleteOne();
   res.status(200).json({ message: "Job deleted successfully" });
 });
+
+export const getJobById = handler(async (req, res) => {
+  const jobId = req.params.id;
+  const job = await Job.findById(jobId);
+
+  if (!job) {
+    res.status(404);
+    throw new Error("Job not found");
+  }
+
+  // ✅ SAFETY CHECK BEFORE CALLING toString
+  if (!job.recruiter || job.recruiter.toString() !== req.user._id.toString()) {
+    res.status(403);
+    throw new Error("You are not authorized to view this job");
+  }
+
+  res.status(200).json(job);
+});
